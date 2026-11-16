@@ -29,18 +29,22 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   
   task drive_item(cordic_seq_item req); 
     if(vif.BUSY==0) begin
+      
    // Wait for aligned clock edge (C0) 
       @(posedge vif.drv_cb)
   // Assert START and drive ANG_MUL selector     
       vif.drv_cb.START<=1;
       vif.drv_cb.ANG_MUL<=req.ANG_MUL;
+
+      
   // Wait for next clock edge (C1) 
       @(posedge vif.drv_cb)
   // Deassert START     
       vif.START<=0;
   // Drive Low Byte onto DATA_IN bus 
       vif.DATA_IN<=req.DATA_IN;
-    
+
+      
   // Wait for next clock edge (C2)     
       @(posedge vif.drv_cb)
   // Drive High Byte onto DATA_IN bus     
