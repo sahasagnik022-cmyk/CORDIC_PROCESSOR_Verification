@@ -11,7 +11,7 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
     super.build_phase(phase);
     
     if(!uvm_config_db#(virtual cordic_if)::get(this,"","virtual_if",vif))
-      `uvm_error("Driver","DRIVER COULD NOT FETCH INTERFACE");
+      `uvm_error("Driver","DRIVER COULD NOT FETCH INTERFACE")
   endfunction
   
   task run_phase(uvm_phase phase);
