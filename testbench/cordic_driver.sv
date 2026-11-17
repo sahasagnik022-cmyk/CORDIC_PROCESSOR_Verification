@@ -2,7 +2,8 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   `uvm_component_utils(cordic_driver)
   
   virtual cordic_if.DRV vif;
-
+  
+  
   function new(string name="cordic_driver", uvm_component parent=null);
     super.new(name,parent);
   endfunction
@@ -11,7 +12,7 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
     super.build_phase(phase);
     
     if(!uvm_config_db#(virtual cordic_if)::get(this,"","virtual_if",vif))
-      `uvm_error("Driver","DRIVER COULD NOT FETCH INTERFACE")
+      `uvm_error("Driver","DRIVER COULD NOT FETCH INTERFACE");
   endfunction
   
   task run_phase(uvm_phase phase);
@@ -41,13 +42,13 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   // Deassert START     
       vif.START<=0;
   // Drive Low Byte onto DATA_IN bus 
-      vif.DATA_IN<=req.DATA_IN;
+      vif.DATA_IN<=req.payload_in[7:0];
 
       
   // Wait for next clock edge (C2)     
       @(posedge vif.drv_cb)
   // Drive High Byte onto DATA_IN bus     
-      vif.DATA_IN<=req.DATA_IN;
+      vif.DATA_IN<=req.payload_in[15:8];
  
 
   // Wait for next clock edge (C3) 
