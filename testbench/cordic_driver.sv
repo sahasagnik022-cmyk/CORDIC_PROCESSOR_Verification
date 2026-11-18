@@ -43,9 +43,3 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   endtask
   
 endclass
-
-      
-      
-      
-    
->>>>>>> 89d224a0a5c9f40ec6e53c9eb8b48217f8e49634
