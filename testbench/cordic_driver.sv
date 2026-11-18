@@ -1,8 +1,14 @@
 class cordic_driver extends uvm_driver #(cordic_seq_item);
   `uvm_component_utils(cordic_driver)
   
+<<<<<<< HEAD
   virtual cordic_if vif;
 
+=======
+  virtual cordic_if.DRV vif;
+  
+  
+>>>>>>> 89d224a0a5c9f40ec6e53c9eb8b48217f8e49634
   function new(string name="cordic_driver", uvm_component parent=null);
     super.new(name,parent);
   endfunction
@@ -41,4 +47,43 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
     vif.drv_cb.DATA_IN <= 8'h00;
   endtask
   
+<<<<<<< HEAD
 endclass
+=======
+  task drive_item(cordic_seq_item req); 
+    if(vif.BUSY==0) begin
+      
+   // Wait for aligned clock edge (C0) 
+      @(posedge vif.drv_cb)
+  // Assert START and drive ANG_MUL selector     
+      vif.drv_cb.START<=1;
+      vif.drv_cb.ANG_MUL<=req.ANG_MUL;
+
+      
+  // Wait for next clock edge (C1) 
+      @(posedge vif.drv_cb)
+  // Deassert START     
+      vif.START<=0;
+  // Drive Low Byte onto DATA_IN bus 
+      vif.DATA_IN<=req.payload_in[7:0];
+
+      
+  // Wait for next clock edge (C2)     
+      @(posedge vif.drv_cb)
+  // Drive High Byte onto DATA_IN bus     
+      vif.DATA_IN<=req.payload_in[15:8];
+ 
+
+  // Wait for next clock edge (C3) 
+      @(posedge vif).drv_cb;
+      vif.DATA_IN<=0;
+  // Clear DATA_IN bus to avoid residual sampling 
+    end
+endtask 
+      
+      
+      
+      
+      
+    
+>>>>>>> 89d224a0a5c9f40ec6e53c9eb8b48217f8e49634
