@@ -3,7 +3,9 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   
   virtual cordic_if vif;
 
-
+  virtual cordic_if.DRV vif;
+  
+  
   function new(string name="cordic_driver", uvm_component parent=null);
     super.new(name,parent);
   endfunction
@@ -42,4 +44,4 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
     vif.drv_cb.DATA_IN <= 8'h00;
   endtask
   
-endclass
+endclass  
