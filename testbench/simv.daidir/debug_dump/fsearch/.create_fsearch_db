@@ -1,9 +1,0 @@
-#!/bin/sh -h 
-PYTHONHOME=/fetools/synopsys/installed_tools/vcs/vcs/Q-2020.03-SP2-8/etc/search/pyh
-export PYTHONHOME
-PYTHONPATH=/fetools/synopsys/installed_tools/vcs/vcs/Q-2020.03-SP2-8/linux64/lib/pylib27
-export PYTHONPATH
-LD_LIBRARY_PATH=/fetools/synopsys/installed_tools/vcs/vcs/Q-2020.03-SP2-8/linux64/lib:/fetools/synopsys/installed_tools/vcs/vcs/Q-2020.03-SP2-8/linux64/lib/pylib27
-export LD_LIBRARY_PATH
-/fetools/synopsys/installed_tools/vcs/vcs/Q-2020.03-SP2-8/linux64/bin/vcsfind_create_index.exe  -z  "/home/sagniksaha/cordic_proc_verification/testbench/simv.daidir/debug_dump/fsearch/./idents_tapi.xml.gz" "/home/sagniksaha/cordic_proc_verification/testbench/simv.daidir/debug_dump/fsearch/./idents_ByXAzs.xml.gz" -o "/home/sagniksaha/cordic_proc_verification/testbench/simv.daidir/debug_dump/fsearch/fsearch.db_tmp"
-\mv "/home/sagniksaha/cordic_proc_verification/testbench/simv.daidir/debug_dump/fsearch/fsearch.db_tmp" "/home/sagniksaha/cordic_proc_verification/testbench/simv.daidir/debug_dump/fsearch/fsearch.db"
