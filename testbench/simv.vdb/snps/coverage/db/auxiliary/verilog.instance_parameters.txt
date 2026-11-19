@@ -1,0 +1,4 @@
+tb_top.DUT.CORDIC_OPERATION2
+tb_top.DUT.IDLE0
+tb_top.DUT.LOAD_INPUT1
+tb_top.DUT.TRANS_DONE3

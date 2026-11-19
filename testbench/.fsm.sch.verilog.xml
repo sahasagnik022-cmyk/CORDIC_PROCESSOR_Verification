@@ -1,0 +1,8 @@
+<Command name="schRTLInfo"  delimiter="."  >
+<RTLBlock >
+<RTLInfo   name="PS_0"  type="2"  fileName="CORDIC.v"  >
+    <Seg beginLine="118"  endLine="135"  />
+  </RTLInfo>
+<Instance name="tb_top.DUT"  />
+</RTLBlock>
+</Command>
