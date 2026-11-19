@@ -27,7 +27,7 @@ class cordic_scoreboard extends uvm_scoreboard;
           calc_ang(exp_tx.payload_in,exp_tx.payload_out[15:0],exp_tx.payload_out[31:16]);
       end
       else begin
-          calc_mul(exp_tx.payload_in,exp_tx.payload_out);
+       calc_mul(exp_tx.payload_in,exp_tx.payload_out[15:0]);
       end
       eq.push_back(exp_tx);
   endfunction
