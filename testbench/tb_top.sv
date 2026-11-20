@@ -1,53 +1,59 @@
-`include "uvm_macros.svh"
-`include "cordic_if.sv"
-`include "cordic_pkg.sv"
-`include "CORDIC.v"
-
 module tb_top;
-  
+
   import uvm_pkg::*;
-  import cordic_pkg::*;
-  
+  import test_pkg::*;
+
   bit CLK, RSTn;
-  
-  cordic_if vif(CLK, RSTn);
-  
-  CORDIC DUT(
+
+  cordic_if DUV_IF(CLK, RSTn);
+
+  CORDIC DUV(
     .CLK(CLK),
     .RSTn(RSTn),
-    .START(vif.START),
-    .ANG_MUL(vif.ANG_MUL),
-    .DATA_IN(vif.DATA_IN),
-    .BUSY(vif.BUSY),
-    .DONE(vif.DONE),
-    .ERROR(vif.ERROR),
-    .ENABLE(vif.ENABLE),
-    .DATA_OUT(vif.DATA_OUT)
+    .START(DUV_IF.START),
+    .ANG_MUL(DUV_IF.ANG_MUL),
+    .DATA_IN(DUV_IF.DATA_IN),
+    .BUSY(DUV_IF.BUSY),
+    .DONE(DUV_IF.DONE),
+    .ERROR(DUV_IF.ERROR),
+    .ENABLE(DUV_IF.ENABLE),
+    .DATA_OUT(DUV_IF.DATA_OUT)
   );
-  
-  /*initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(0,tb_top);
-  end*/
-  
+
+  bind CORDIC cordic_sva sva_inst (
+    .CLK(CLK),
+    .RSTn(RSTn),
+    .START(START),
+    .ANG_MUL(ANG_MUL),
+    .DATA_IN(DATA_IN),
+    .BUSY(BUSY),
+    .ERROR(ERROR),
+    .DONE(DONE),
+    .ENABLE(ENABLE),
+    .DATA_OUT(DATA_OUT)
+  );
+
   initial begin
-    uvm_config_db #(virtual cordic_if)::set(null,"*","vif",vif);
+    uvm_config_db #(virtual cordic_if)::set(null,"*","vif",DUV_IF);
     run_test();
   end
-  
+
   initial begin
     CLK = 1'b0;
-    
+
     forever begin
-      #10 CLK = ~CLK;
+      #5 CLK = ~CLK;
     end
   end
-  
+
   initial begin
     RSTn = 1'b0;
-    #20;
+    #10;
     RSTn = 1'b1;
+    #100;
+    RSTn=1'b0;
+    #20;
+    RSTn=1'b1;
   end
-  
 
 endmodule
