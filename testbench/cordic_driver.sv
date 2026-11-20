@@ -2,9 +2,6 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
   `uvm_component_utils(cordic_driver)
   
   virtual cordic_if vif;
-
-  virtual cordic_if.DRV vif;
-  
   
   function new(string name="cordic_driver", uvm_component parent=null);
     super.new(name,parent);
@@ -21,8 +18,8 @@ class cordic_driver extends uvm_driver #(cordic_seq_item);
     if (vif.RSTn !== 1'b0) begin
       @(negedge vif.RSTn);
     end
-    vif.START   <= 1'b0;
-    vif.DATA_IN <= 8'h00;
+    vif.drv_cb.START   <= 1'b0;
+    vif.drv_cb.DATA_IN <= 8'h00;
     @(posedge vif.RSTn);
     forever begin
       seq_item_port.get_next_item(req);

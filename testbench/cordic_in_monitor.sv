@@ -26,7 +26,7 @@ class cordic_in_monitor extends uvm_monitor;
     @(posedge vif.RSTn);
     
     forever begin
-      @(vif.in_mon_cb iff vif.in_mon_cb.START === 1'b1);
+      @(vif.in_mon_cb iff (vif.in_mon_cb.START === 1'b1 && vif.in_mon_cb.BUSY===1'b0));
       cseq = cordic_seq_item::type_id::create("cseq");
       cseq.ANG_MUL = vif.in_mon_cb.ANG_MUL; 
       @(vif.in_mon_cb);//Cycle C1

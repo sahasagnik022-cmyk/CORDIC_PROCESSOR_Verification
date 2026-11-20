@@ -20,7 +20,9 @@ class cordic_env extends uvm_env;
   
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    
+    in_agt.in_mon.in_mon_ap.connect(scb.port_in);
+    out_agt.out_mon.out_mon_ap.connect(scb.port_out);
+    in_agt.in_mon.in_mon_ap.connect(sub.analysis_export);
   endfunction
   
 endclass
