@@ -10,7 +10,7 @@ class cordic_sequence extends uvm_sequence #(cordic_seq_item);
   task body();
       req = cordic_seq_item::type_id::create("req");
       start_item(req);
-    assert(req.randomize() with {payload_in inside {16'h0001};});
+    assert(req.randomize());
       finish_item(req);
   endtask
   
@@ -299,6 +299,26 @@ class seq_rand_mixed_mode_back_to_back extends uvm_sequence #(cordic_seq_item);
       assert(req.randomize() with {payload_in inside {[16'h0000:16'hFFFF]};});
       finish_item(req);
     end
+  endtask
+  
+endclass
+
+
+//RAND MIXED MODE BACK TO BACK 
+class seq_rand_mixed_mode_back_to_back extends uvm_sequence #(cordic_seq_item);
+  `uvm_object_utils(seq_rand_mixed_mode_back_to_back)
+
+  cordic_seq_item req;
+
+  function new(string name="seq_rand_mixed_mode_back_to_back");
+    super.new(name);
+    endfunction
+  
+  task body();
+      req = cordic_seq_item::type_id::create("req");
+      start_item(req);
+      assert(req.randomize());
+      finish_item(req);
   endtask
   
 endclass
