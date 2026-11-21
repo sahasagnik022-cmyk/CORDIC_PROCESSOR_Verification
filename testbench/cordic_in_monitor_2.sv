@@ -4,7 +4,7 @@ class cordic_in_monitor_2 extends uvm_monitor;
     virtual cordic_if vif;
     uvm_analysis_port#(cordic_seq_item) in_mon_ap;
 
-    function new(string name="cordic_in_monitor_2",uvm_component parent=new);
+    function new(string name="cordic_in_monitor_2", uvm_component parent=null);
         super.new(name,parent);
     endfunction
 
@@ -20,30 +20,38 @@ class cordic_in_monitor_2 extends uvm_monitor;
 
     virtual task run_phase(uvm_phase phase);
         cordic_seq_item cseq;
-        if(vif.RSTn !==1'b0) begin
-            @(negedge vif.RSTn)
+        
+        if(vif.RSTn !== 1'b0) begin
+            @(negedge vif.RSTn);
         end
+        
         forever begin
-        @(posedge vif.RSTn);
+            @(posedge vif.RSTn);
+            
             fork
                 begin: normal_loop
-                    @(vif.in_mon_cb);
-                    cseq=cordic_seq_item::type_id::create("cseq");
-                    cseq.START=vif.in_mon_cb.START;
-                    cseq.ANG_MUL=vif.in_mon_cb.ANG_MUL;
-                    cseq.DATA_IN=vif.in_mon_cb.DATA_IN;
-                    cseq.is_reset=1'b1;
-                    in_mon_ap.write(cseq);
+                    forever begin
+                        @(vif.in_mon_cb);
+                        cseq=cordic_seq_item::type_id::create("cseq");
+                        cseq.START=vif.in_mon_cb.START;
+                        cseq.ANG_MUL=vif.in_mon_cb.ANG_MUL;
+                        cseq.DATA_IN=vif.in_mon_cb.DATA_IN;
+                        cseq.is_reset=1'b0; 
+                        in_mon_ap.write(cseq);
+                    end
                 end
                 begin: reset_check
                     @(negedge vif.RSTn);
                 end
-        join_any
+            join_any
 
-        disable fork;
-        cseq=cordic_seq_item::type_id::create("cseq");
-        cseq.is_reset=1'b1;
-        in_mon_ap.write(cseq);    
+            disable fork;
+            if(vif.RSTn === 1'b0) begin
+                cseq=cordic_seq_item::type_id::create("cseq");
+                cseq.is_reset=1'b1;
+                in_mon_ap.write(cseq);    
+            end
+        end 
     endtask
 
 endclass
