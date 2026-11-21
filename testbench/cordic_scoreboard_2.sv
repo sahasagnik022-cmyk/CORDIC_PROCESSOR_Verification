@@ -24,11 +24,14 @@ class cordic_scoreboard_2 extends uvm_scoreboard;
 
     virtual function void write_in(cordic_seq_item tx);
         cordic_seq_item exp_tx;
+        
         if (tx.is_reset_flush) begin
             eq.delete();
-            `uvm_info("SCB", "TLM Reset Packet Received. Expected queue flushed.", UVM_MEDIUM)
+            byte_count = 0; // Ensure input state machine resets too
+            `uvm_info("SCB_IN", "TLM Reset Packet Received. Expected queue flushed.", UVM_MEDIUM)
             return;
         end
+        
         if(tx.START == 1'b1) begin
             if(!$cast(exp_tx,tx.clone()))
                 `uvm_fatal("SCB","Cloning failed")
@@ -57,25 +60,32 @@ class cordic_scoreboard_2 extends uvm_scoreboard;
         bit signed [15:0] act_product;
         bit signed [15:0] act_cos;
         bit signed [15:0] act_sin;
-        if(tx.DONE == 1'b0) begin
+
+        if (tx.is_reset) begin
             out_byte_count = 0;
+            `uvm_info("SCB_OUT", "TLM Reset Packet Received at Output. State cleared.", UVM_MEDIUM)
+            return;
+        end
+        if(tx.DONE == 1'b0) begin
             return;
         end
         if(eq.size() == 0) begin
             `uvm_error("SCB","Received output but expected queue is empty")
             return;
-        end
+        end 
         if(eq[0].ANG_MUL == 1'b1) begin
             required_bytes = 4;
         end
         else begin
             required_bytes = 2;
         end
+        
         if(out_byte_count == 0) eq[0].payload_out[7:0] = tx.DATA_OUT;
         else if(out_byte_count == 1) eq[0].payload_out[15:8] = tx.DATA_OUT;
         else if(out_byte_count == 2) eq[0].payload_out[23:16] = tx.DATA_OUT;
         else if(out_byte_count == 3) eq[0].payload_out[31:24] = tx.DATA_OUT;
         out_byte_count++;
+        
         if(out_byte_count == required_bytes) begin
             if(eq[0].ANG_MUL == 1'b1) begin //Angle
                 calc_ang(eq[0].payload_in,exp_cos,exp_sin);
@@ -104,9 +114,7 @@ class cordic_scoreboard_2 extends uvm_scoreboard;
             out_byte_count = 0;
         end
     endfunction
-
-
-    // MULTIPLICATION CALCULATION
+    //MULTIPLICATION
     function void calc_mul(input bit [15:0] data_in,output bit signed [15:0] data_out);
         bit signed [7:0] opa;
         bit signed [7:0] opb;
@@ -114,7 +122,7 @@ class cordic_scoreboard_2 extends uvm_scoreboard;
         opb = data_in[15:8];
         data_out = opa * opb;
     endfunction
-    // ANGLE CALCULATION
+    //ANGLE
     function void calc_ang(input bit [15:0] data_in,output bit signed [15:0] cos_out,output bit signed [15:0] sin_out);
         real pi = $acos(-1.0);
         real angle_radians;
