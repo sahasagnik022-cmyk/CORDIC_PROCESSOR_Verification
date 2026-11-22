@@ -12,8 +12,8 @@ module cordic_sva(
 );
 
 property p1;
-    @(negedge RSTn)
-    (!START) |-> (!DATA_OUT && !DONE && !BUSY && !ERROR);
+    @(posedge CLK)
+    (!RSTn) |-> (DATA_OUT == 8'h00 && !DONE && !BUSY && !ERROR);
 endproperty
 
 p1_check: assert property(p1)
