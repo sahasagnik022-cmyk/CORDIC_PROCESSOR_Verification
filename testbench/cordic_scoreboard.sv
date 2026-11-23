@@ -20,6 +20,12 @@ class cordic_scoreboard extends uvm_scoreboard;
 
   virtual function void write_in(cordic_seq_item tx);
       cordic_seq_item exp_tx;
+      
+      if (tx.is_reset == 1'b1) begin
+          eq.delete();
+          return;
+      end
+      
       `uvm_info("SCB","Cloning transaction",UVM_HIGH)
       if(!$cast(exp_tx,tx.clone()))
           `uvm_fatal("SCB","Cloning failed")
@@ -36,6 +42,12 @@ class cordic_scoreboard extends uvm_scoreboard;
       cordic_seq_item exp_tx;
       bit signed [15:0] act_product,act_cos,act_sin;
       int cos_diff,sin_diff;
+      
+      if (tx.is_reset == 1'b1) begin
+          eq.delete();
+          return;
+      end
+      
       if(eq.size()==0) begin
           `uvm_error("SCB","Received output but expected queue is empty")
       end
