@@ -20,20 +20,39 @@ class cordic_in_monitor extends uvm_monitor;
   
   virtual task run_phase(uvm_phase phase);
     cordic_seq_item cseq;
-    if (vif.RSTn !== 1'b0) begin
-      @(negedge vif.RSTn);
-    end
-    @(posedge vif.RSTn);
     
     forever begin
-      @(vif.in_mon_cb iff (vif.in_mon_cb.START === 1'b1 && vif.in_mon_cb.BUSY===1'b0));
-      cseq = cordic_seq_item::type_id::create("cseq");
-      cseq.ANG_MUL = vif.in_mon_cb.ANG_MUL; 
-      @(vif.in_mon_cb);//Cycle C1
-      cseq.payload_in[7:0]  = vif.in_mon_cb.DATA_IN; 
-      @(vif.in_mon_cb);// Cycle C2
-      cseq.payload_in[15:8] = vif.in_mon_cb.DATA_IN; 
-      in_mon_ap.write(cseq);
+      if (vif.RSTn !== 1'b0) begin
+        @(negedge vif.RSTn);
+      end
+      @(posedge vif.RSTn);
+      
+      fork
+        begin: normal_loop
+          forever begin
+            @(vif.in_mon_cb iff (vif.in_mon_cb.START == 1'b1 && vif.in_mon_cb.BUSY ==1'b0));
+            cseq = cordic_seq_item::type_id::create("cseq");
+            cseq.ANG_MUL = vif.in_mon_cb.ANG_MUL; 
+            @(vif.in_mon_cb);//Cycle C1
+            cseq.payload_in[7:0]  = vif.in_mon_cb.DATA_IN; 
+            @(vif.in_mon_cb);// Cycle C2
+            cseq.payload_in[15:8] = vif.in_mon_cb.DATA_IN; 
+            cseq.is_reset = 1'b0;
+            in_mon_ap.write(cseq);
+          end
+        end
+        begin: reset_check
+          @(negedge vif.RSTn);
+        end
+      join_any
+      
+      disable fork;
+      
+      if(vif.RSTn == 1'b0) begin
+        cseq = cordic_seq_item::type_id::create("cseq");
+        cseq.is_reset = 1'b1;
+        in_mon_ap.write(cseq);    
+      end
     end
   endtask
   
