@@ -43,9 +43,5 @@ class cordic_out_monitor extends uvm_monitor;
       out_mon_ap.write(cseq);
     end
   endtask
-  
-<<<<<<< HEAD
+
 endclass
-=======
-endclass
->>>>>>> 4b4b23adfdfdb0e10d1719e6e0a5231b5364d14b
