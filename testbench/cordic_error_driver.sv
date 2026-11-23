@@ -1,4 +1,4 @@
-class cordic_error_driver extends cordic_driver;
+class cordic_error_driver extends cordic_driver_2;
     `uvm_component_utils(cordic_error_driver)
 
     function new(string name="cordic_error_driver",uvm_component parent=null);
