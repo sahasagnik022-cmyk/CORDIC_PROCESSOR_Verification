@@ -6,12 +6,14 @@ class seq_rand_mixed_mode_back_to_back extends uvm_sequence #(cordic_seq_item);
   function new(string name="seq_rand_mixed_mode_back_to_back");
     super.new(name);
     endfunction
-  
+
   task body();
-      req = cordic_seq_item::type_id::create("req");
-      start_item(req);
-      assert(req.randomize());
-      finish_item(req);
+      repeat(20) begin
+        req = cordic_seq_item::type_id::create("req");
+        start_item(req);
+        assert(req.randomize());
+        finish_item(req);
+      end
   endtask
-  
+
 endclass
