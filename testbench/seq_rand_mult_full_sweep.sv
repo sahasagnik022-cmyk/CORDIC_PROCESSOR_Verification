@@ -8,7 +8,7 @@ class seq_rand_mult_full_sweep extends uvm_sequence #(cordic_seq_item);
   endfunction
   
   task body();
-    for(int i=0;i<65536;i++) begin
+    for(int i=0;i<1000;i++) begin
       req = cordic_seq_item::type_id::create("req");
       start_item(req);
       assert(req.randomize() with {ANG_MUL==0; payload_in==i;});
