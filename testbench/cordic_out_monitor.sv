@@ -21,26 +21,45 @@ class cordic_out_monitor extends uvm_monitor;
   virtual task run_phase(uvm_phase phase);
     cordic_seq_item cseq;
     int byte_cnt;
-    if (vif.RSTn!==1'b0) begin
-      @(negedge vif.RSTn);
-    end
-    @(posedge vif.RSTn);
     
     forever begin
-      @(vif.out_mon_cb iff vif.out_mon_cb.DONE === 1'b1);
-      cseq = cordic_seq_item::type_id::create("cseq");
-      cseq.payload_out = 32'h0;
-      byte_cnt = 0;
-      
-      while (vif.out_mon_cb.DONE === 1'b1) begin
-        if (byte_cnt==0) cseq.payload_out[7:0]=vif.out_mon_cb.DATA_OUT;
-        if (byte_cnt==1) cseq.payload_out[15:8]=vif.out_mon_cb.DATA_OUT;
-        if (byte_cnt==2) cseq.payload_out[23:16]=vif.out_mon_cb.DATA_OUT;
-        if (byte_cnt==3) cseq.payload_out[31:24]=vif.out_mon_cb.DATA_OUT;
-        byte_cnt++;
-        @(vif.out_mon_cb);
+      if (vif.RSTn!==1'b0) begin
+        @(negedge vif.RSTn);
       end
-      out_mon_ap.write(cseq);
+      @(posedge vif.RSTn);
+      
+      fork
+        begin: normal_loop
+          forever begin
+            @(vif.out_mon_cb iff vif.out_mon_cb.DONE == 1'b1);
+            cseq = cordic_seq_item::type_id::create("cseq");
+            cseq.payload_out = 32'h0;
+            byte_cnt = 0;
+            
+            while (vif.out_mon_cb.DONE == 1'b1) begin
+              if (byte_cnt==0) cseq.payload_out[7:0]=vif.out_mon_cb.DATA_OUT;
+              if (byte_cnt==1) cseq.payload_out[15:8]=vif.out_mon_cb.DATA_OUT;
+              if (byte_cnt==2) cseq.payload_out[23:16]=vif.out_mon_cb.DATA_OUT;
+              if (byte_cnt==3) cseq.payload_out[31:24]=vif.out_mon_cb.DATA_OUT;
+              byte_cnt++;
+              @(vif.out_mon_cb);
+            end
+            cseq.is_reset = 1'b0;
+            out_mon_ap.write(cseq);
+          end
+        end
+        begin: reset_check
+          @(negedge vif.RSTn);
+        end
+      join_any
+      
+      disable fork;
+      
+      if(vif.RSTn === 1'b0) begin
+        cseq = cordic_seq_item::type_id::create("cseq");
+        cseq.is_reset = 1'b1;
+        out_mon_ap.write(cseq);
+      end
     end
   endtask
 
