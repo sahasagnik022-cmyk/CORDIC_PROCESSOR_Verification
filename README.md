@@ -6,7 +6,7 @@ Angle Mode: Calculates Sine and Cosine for a given 16-bit angle.
 Multiplication Mode: Performs standard multiplication of two 8-bit operands.
 The testbench achieves 100% Code and Functional Coverage and incorporates advanced verification concepts, including asynchronous mid-test reset resilience, error injection (negative testing), and cycle-accurate payload assembly.
 Testbench Architecture
-![CORDIC UVM Testbench Architecture](cordic_tb_architecture.jpg)
+![CORDIC UVM Testbench Architecture](docs/cordic_tb_architecture.jpg)
 The UVM environment (`cordic_env`) is structured as follows:
 1. Input Agent (`cordic_in_agent` - Active)
 `cordic_sequencer`: Routes randomized `cordic_seq_item` transactions from sequences to the driver.
